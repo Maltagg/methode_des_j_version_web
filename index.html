@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="theme-color"
+        content="#4f46e5"
+    >
+
+    <meta
+        name="description"
+        content="Méthode des J - Application de révision espacée"
+    >
+
+    <title>Méthode des J</title>
+
+    <link
+        rel="manifest"
+        href="manifest.json"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
+</head>
+
+
+<body>
+
+<div id="app">
+
+
+    <!-- =====================================================
+         MENU LATÉRAL
+         ===================================================== -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+
+            <div class="logo-icon">
+                J
+            </div>
+
+            <div>
+
+                <div class="logo-text">
+                    Méthode des J
+                </div>
+
+                <span class="logo-subtitle">
+                    Révisions intelligentes
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <nav class="navigation">
+
+            <button
+                class="navigation-button active"
+                data-page="home"
+            >
+
+                <span class="navigation-icon">
+                    🏠
+                </span>
+
+                <span>
+                    Accueil
+                </span>
+
+            </button>
+
+
+            <button
+                class="navigation-button"
+                data-page="chapters"
+            >
+
+                <span class="navigation-icon">
+                    📚
+                </span>
+
+                <span>
+                    Chapitres
+                </span>
+
+            </button>
+
+
+            <button
+                class="navigation-button"
+                data-page="agenda"
+            >
+
+                <span class="navigation-icon">
+                    📅
+                </span>
+
+                <span>
+                    Agenda
+                </span>
+
+            </button>
+
+
+            <button
+                class="navigation-button"
+                data-page="statistics"
+            >
+
+                <span class="navigation-icon">
+                    📊
+                </span>
+
+                <span>
+                    Statistiques
+                </span>
+
+            </button>
+
+
+            <button
+                class="navigation-button"
+                data-page="settings"
+            >
+
+                <span class="navigation-icon">
+                    ⚙️
+                </span>
+
+                <span>
+                    Paramètres
+                </span>
+
+            </button>
+
+        </nav>
+
+    </aside>
+
+
+
+    <!-- =====================================================
+         CONTENU PRINCIPAL
+         ===================================================== -->
+
+    <main class="main">
+
+        <div class="content">
+
+
+            <!-- =================================================
+                 ACCUEIL
+                 ================================================= -->
+
+            <section
+                id="page-home"
+                class="page active"
+            >
+
+                <header class="page-header">
+
+                    <div>
+
+                        <h1 class="page-title">
+                            Bonjour 👋
+                        </h1>
+
+                        <p class="page-subtitle">
+                            Voici ce que tu as à réviser aujourd'hui.
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        class="button button-primary"
+                        id="add-chapter-button"
+                    >
+
+                        ＋ Ajouter un chapitre
+
+                    </button>
+
+                </header>
+
+
+
+                <!-- STATISTIQUES RAPIDES -->
+
+                <div class="dashboard-grid">
+
+
+                    <div class="stat-card">
+
+                        <div class="stat-label">
+                            À réviser aujourd'hui
+                        </div>
+
+                        <div
+                            class="stat-value"
+                            id="today-reviews"
+                        >
+                            0
+                        </div>
+
+                        <div class="stat-description">
+                            révisions prévues
+                        </div>
+
+                    </div>
+
+
+                    <div class="stat-card">
+
+                        <div class="stat-label">
+                            En retard
+                        </div>
+
+                        <div
+                            class="stat-value"
+                            id="late-reviews"
+                        >
+                            0
+                        </div>
+
+                        <div class="stat-description">
+                            révisions à rattraper
+                        </div>
+
+                    </div>
+
+
+                    <div class="stat-card">
+
+                        <div class="stat-label">
+                            Chapitres
+                        </div>
+
+                        <div
+                            class="stat-value"
+                            id="total-chapters"
+                        >
+                            0
+                        </div>
+
+                        <div class="stat-description">
+                            chapitres enregistrés
+                        </div>
+
+                    </div>
+
+
+                    <div class="stat-card">
+
+                        <div class="stat-label">
+                            Série actuelle
+                        </div>
+
+                        <div
+                            class="stat-value"
+                            id="current-streak"
+                        >
+                            0
+                        </div>
+
+                        <div class="stat-description">
+                            jours consécutifs
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- RÉVISIONS DU JOUR -->
+
+                <section class="section">
+
+                    <div class="section-header">
+
+                        <h2 class="section-title">
+                            Révisions du jour
+                        </h2>
+
+                        <button
+                            class="button button-secondary"
+                            data-page-link="agenda"
+                        >
+                            Voir l'agenda
+                        </button>
+
+                    </div>
+
+
+                    <div
+                        id="today-reviews-list"
+                        class="review-list"
+                    >
+
+                        <div class="card">
+
+                            <div class="card-body">
+
+                                <p>
+                                    🎉 Aucune révision pour le moment.
+                                </p>
+
+                                <p class="page-subtitle">
+                                    Ajoute ton premier chapitre pour commencer.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- PROCHAINS J -->
+
+                <section class="section">
+
+                    <div class="section-header">
+
+                        <h2 class="section-title">
+                            Prochaines révisions
+                        </h2>
+
+                    </div>
+
+
+                    <div
+                        id="upcoming-reviews-list"
+                        class="review-list"
+                    >
+
+                    </div>
+
+                </section>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 CHAPITRES
+                 ================================================= -->
+
+            <section
+                id="page-chapters"
+                class="page"
+            >
+
+                <header class="page-header">
+
+                    <div>
+
+                        <h1 class="page-title">
+                            Chapitres
+                        </h1>
+
+                        <p class="page-subtitle">
+                            Gère les cours que tu souhaites réviser.
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        class="button button-primary"
+                        id="add-chapter-button-2"
+                    >
+
+                        ＋ Ajouter un chapitre
+
+                    </button>
+
+                </header>
+
+
+                <div
+                    id="chapters-list"
+                    class="chapters-grid"
+                >
+
+                    <!-- Les chapitres seront générés par JavaScript -->
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 AGENDA
+                 ================================================= -->
+
+            <section
+                id="page-agenda"
+                class="page"
+            >
+
+                <header class="page-header">
+
+                    <div>
+
+                        <h1 class="page-title">
+                            Agenda
+                        </h1>
+
+                        <p class="page-subtitle">
+                            Visualise toutes tes révisions.
+                        </p>
+
+                    </div>
+
+                </header>
+
+
+                <div class="calendar-container">
+
+
+                    <div class="calendar-toolbar">
+
+                        <div
+                            id="calendar-month"
+                            class="calendar-month"
+                        >
+                            Calendrier
+                        </div>
+
+
+                        <div class="calendar-navigation">
+
+                            <button
+                                id="calendar-previous"
+                                aria-label="Mois précédent"
+                            >
+                                ←
+                            </button>
+
+                            <button
+                                id="calendar-today"
+                                aria-label="Aujourd'hui"
+                            >
+                                Aujourd'hui
+                            </button>
+
+                            <button
+                                id="calendar-next"
+                                aria-label="Mois suivant"
+                            >
+                                →
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <div id="calendar">
+
+                        <!-- Calendrier généré par JavaScript -->
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 STATISTIQUES
+                 ================================================= -->
+
+            <section
+                id="page-statistics"
+                class="page"
+            >
+
+                <header class="page-header">
+
+                    <div>
+
+                        <h1 class="page-title">
+                            Statistiques
+                        </h1>
+
+                        <p class="page-subtitle">
+                            Analyse ta progression et ta régularité.
+                        </p>
+
+                    </div>
+
+                </header>
+
+
+
+                <div class="statistics-grid">
+
+
+                    <div class="stat-card">
+
+                        <div class="stat-label">
+                            Révisions réalisées
+                        </div>
+
+                        <div
+                            id="statistics-completed"
+                            class="stat-value"
+                        >
+                            0
+                        </div>
+
+                    </div>
+
+
+                    <div class="stat-card">
+
+                        <div class="stat-label">
+                            Taux de réussite
+                        </div>
+
+                        <div
+                            id="statistics-success"
+                            class="stat-value"
+                        >
+                            0 %
+                        </div>
+
+                    </div>
+
+
+                    <div class="stat-card">
+
+                        <div class="stat-label">
+                            Série maximale
+                        </div>
+
+                        <div
+                            id="statistics-best-streak"
+                            class="stat-value"
+                        >
+                            0 j
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="card">
+
+                    <div class="card-header">
+
+                        <h2 class="card-title">
+                            Répartition des révisions
+                        </h2>
+
+                    </div>
+
+
+                    <div class="card-body">
+
+                        <div
+                            id="statistics-chart"
+                            style="
+                                min-height: 300px;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                            "
+                        >
+
+                            Les statistiques seront affichées ici.
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 PARAMÈTRES
+                 ================================================= -->
+
+            <section
+                id="page-settings"
+                class="page"
+            >
+
+                <header class="page-header">
+
+                    <div>
+
+                        <h1 class="page-title">
+                            Paramètres
+                        </h1>
+
+                        <p class="page-subtitle">
+                            Personnalise ton expérience.
+                        </p>
+
+                    </div>
+
+                </header>
+
+
+
+                <!-- MÉTHODE DES J -->
+
+                <div class="card settings-section">
+
+                    <div class="card-header">
+
+                        <h2 class="card-title">
+                            Méthode de révision
+                        </h2>
+
+                    </div>
+
+
+                    <div class="card-body">
+
+                        <p class="settings-description">
+
+                            Lorsqu'un nouveau chapitre est créé,
+                            les révisions seront automatiquement
+                            programmées selon cette méthode.
+
+                        </p>
+
+
+                        <div class="form-group">
+
+                            <label>
+                                Intervalles de révision
+                            </label>
+
+                            <input
+                                id="revision-intervals"
+                                type="text"
+                                value="0,1,3,7,15,30,45"
+                            >
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- NOTIFICATIONS -->
+
+                <div class="card settings-section">
+
+                    <div class="card-header">
+
+                        <h2 class="card-title">
+                            Notifications
+                        </h2>
+
+                    </div>
+
+
+                    <div class="card-body">
+
+                        <div class="form-group">
+
+                            <label>
+                                Heure du rappel
+                            </label>
+
+                            <input
+                                id="notification-time"
+                                type="time"
+                                value="19:00"
+                            >
+
+                        </div>
+
+
+                        <button
+                            id="enable-notifications"
+                            class="button button-primary"
+                        >
+
+                            🔔 Activer les notifications
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- DONNÉES -->
+
+                <div class="card settings-section">
+
+                    <div class="card-header">
+
+                        <h2 class="card-title">
+                            Données
+                        </h2>
+
+                    </div>
+
+
+                    <div class="card-body">
+
+                        <p class="settings-description">
+
+                            Tes données sont stockées localement
+                            sur ton appareil.
+
+                        </p>
+
+
+                        <div
+                            style="
+                                display:flex;
+                                gap:8px;
+                                flex-wrap:wrap;
+                            "
+                        >
+
+                            <button
+                                id="export-data"
+                                class="button button-secondary"
+                            >
+                                📤 Exporter
+                            </button>
+
+
+                            <button
+                                id="import-data"
+                                class="button button-secondary"
+                            >
+                                📥 Importer
+                            </button>
+
+
+                            <button
+                                id="reset-data"
+                                class="button button-danger"
+                            >
+                                🗑️ Réinitialiser
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+        </div>
+
+    </main>
+
+
+
+    <!-- =====================================================
+         MODALE
+         ===================================================== -->
+
+    <div
+        id="modal"
+        class="hidden"
+    >
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h2
+                    id="modal-title"
+                    class="modal-title"
+                >
+                    Ajouter un chapitre
+                </h2>
+
+
+                <button
+                    id="modal-close"
+                    class="modal-close"
+                    aria-label="Fermer"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <div id="modal-body">
+
+                <!-- Contenu généré par JavaScript -->
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         NOTIFICATION TOAST
+         ===================================================== -->
+
+    <div id="toast"></div>
+
+
+</div>
+
+
+<!-- =========================================================
+     JAVASCRIPT
+     ========================================================= -->
+
+<!-- =========================================================
+     FIREBASE (synchro entre appareils)
+     ========================================================= -->
+
+<script src="https://www.gstatic.com/firebasejs/12.18.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore-compat.js"></script>
+
+<script src="js/db.js"></script>
+<script src="js/revision.js"></script>
+<script src="js/sync.js"></script>
+<script src="js/app.js"></script>
+
+
+<!-- =========================================================
+     SERVICE WORKER
+     ========================================================= -->
+
+<script>
+
+if ("serviceWorker" in navigator) {
+
+    window.addEventListener(
+        "load",
+        () => {
+
+            navigator.serviceWorker
+                .register("service-worker.js")
+                .then(() => {
+
+                    console.log(
+                        "Service Worker enregistré."
+                    );
+
+                })
+                .catch(
+                    error => {
+
+                        console.error(
+                            "Erreur Service Worker :",
+                            error
+                        );
+
+                    }
+                );
+
+        }
+    );
+
+}
+
+</script>
+
+</body>
+
+</html>
