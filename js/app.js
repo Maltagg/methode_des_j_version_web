@@ -57,6 +57,23 @@ const MAIN_NAV_VIEWS = [
 ];
 
 
+/*
+ * Les onglets regroupés dans la section "Plus" de la
+ * navigation ("parametres" en est exclu : il a son
+ * propre raccourci en haut à droite).
+ */
+
+const PLUS_NAV_VIEWS = [
+
+    "planning",
+    "semaine-type",
+    "pomodoro",
+    "statistiques",
+    "decouverte"
+
+];
+
+
 const AppState = {
 
     currentView: "accueil",
@@ -296,11 +313,19 @@ function navigateTo(view) {
      * Les 4 onglets "Principal" replient automatiquement
      * la section "Plus" quand on y retourne — sauf si
      * l'utilisateur a choisi (dans Paramètres) de la
-     * garder toujours déroulée.
+     * garder toujours déroulée. "Paramètres" a son propre
+     * raccourci (icône en haut à droite) et n'est plus
+     * dans "Plus" : y accéder ne doit ni la déplier ni
+     * la replier.
      */
 
     const isMainTab =
         MAIN_NAV_VIEWS.includes(
+            view
+        );
+
+    const isPlusTab =
+        PLUS_NAV_VIEWS.includes(
             view
         );
 
@@ -314,7 +339,7 @@ function navigateTo(view) {
             false;
 
     } else if (
-        !isMainTab
+        isPlusTab
     ) {
 
         AppState.plusMenuExpanded =
@@ -1368,13 +1393,6 @@ function renderNavigation() {
                     data-view="statistiques"
                 >
                     📊 Statistiques
-                </button>
-
-                <button
-                    type="button"
-                    data-view="parametres"
-                >
-                    ⚙️ Paramètres
                 </button>
 
                 ${

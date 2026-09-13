@@ -8,7 +8,7 @@
    CONFIGURATION
    ========================================================= */
 
-const CACHE_NAME = "methode-des-j-v5";
+const CACHE_NAME = "methode-des-j-v6";
 
 
 const APP_FILES = [
