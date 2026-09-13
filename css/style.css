@@ -4670,3 +4670,73 @@ EMPLOI DU TEMPS
     min-width: 200px;
 
 }
+
+/* ======================================================
+   RACCOURCI PARAMÈTRES (icône fixe en haut à droite)
+   ====================================================== */
+
+.header-settings-shortcut {
+
+    position: fixed;
+
+    top: 16px;
+
+    right: 16px;
+
+    z-index: 200;
+
+    width: 40px;
+
+    height: 40px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border:
+        1px solid var(--color-border);
+
+    border-radius: 50%;
+
+    background:
+        var(--color-surface);
+
+    color:
+        var(--color-text);
+
+    font-size: 18px;
+
+    box-shadow:
+        0 2px 8px rgba(0, 0, 0, 0.08);
+
+    transition:
+        var(--transition);
+
+}
+
+.header-settings-shortcut:hover {
+
+    background:
+        var(--color-surface-secondary);
+
+    transform: rotate(25deg);
+
+}
+
+@media (max-width: 700px) {
+
+    .header-settings-shortcut {
+
+        top: 10px;
+
+        right: 10px;
+
+        width: 34px;
+
+        height: 34px;
+
+        font-size: 15px;
+
+    }
+
+}

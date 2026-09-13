@@ -114,7 +114,17 @@ const DEFAULT_DATABASE = {
          * principal).
          */
 
-        keepPlusMenuExpanded: false
+        keepPlusMenuExpanded: false,
+
+        /*
+         * Passe à true dès que le tutoriel de
+         * découverte a été lancé une première fois
+         * (automatiquement ou manuellement). Sert à
+         * masquer l'onglet "Découverte" de la
+         * navigation après la première utilisation.
+         */
+
+        hasSeenDiscovery: false
 
     }
 

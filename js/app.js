@@ -191,6 +191,29 @@ function initApp() {
 
     renderApp();
 
+
+    /*
+     * Première utilisation de l'appli : on lance le
+     * tutoriel guidé automatiquement, et on marque la
+     * découverte comme vue (l'onglet "Découverte"
+     * disparaîtra alors de la navigation).
+     */
+
+    if (
+        !Database.getSettings().hasSeenDiscovery
+    ) {
+
+        Database.updateSettings({
+            hasSeenDiscovery: true
+        });
+
+        renderApp();
+
+        startTour();
+
+    }
+
+
     console.log(
         "Méthode des J — application initialisée."
     );
@@ -1201,6 +1224,15 @@ function renderLayout() {
 
             </main>
 
+            <button
+                type="button"
+                class="header-settings-shortcut"
+                data-view="parametres"
+                title="Paramètres"
+            >
+                ⚙️
+            </button>
+
         </div>
 
     `;
@@ -1345,12 +1377,18 @@ function renderNavigation() {
                     ⚙️ Paramètres
                 </button>
 
-                <button
-                    type="button"
-                    data-view="decouverte"
-                >
-                    🧭 Découverte
-                </button>
+                ${
+                    Database.getSettings().hasSeenDiscovery
+                        ? ""
+                        : `
+                            <button
+                                type="button"
+                                data-view="decouverte"
+                            >
+                                🧭 Découverte
+                            </button>
+                        `
+                }
 
             </div>
 
@@ -7753,6 +7791,42 @@ function renderSettings() {
             <section class="settings-section">
 
                 <h3>
+                    🧭 Découverte
+                </h3>
+
+                <p class="settings-hint">
+                    Le tutoriel s'est lancé automatiquement à ta
+                    première utilisation, et l'onglet "Découverte"
+                    ne s'affiche plus dans la navigation. Tu
+                    peux le revoir ici à tout moment.
+                </p>
+
+                <div style="display:flex; gap:10px; flex-wrap:wrap;">
+
+                    <button
+                        type="button"
+                        class="secondary-button"
+                        data-view="decouverte"
+                    >
+                        📖 Revoir la page Découverte
+                    </button>
+
+                    <button
+                        type="button"
+                        class="primary-button"
+                        data-action="start-tour"
+                    >
+                        ▶️ Relancer le tutoriel guidé
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <section class="settings-section">
+
+                <h3>
                     Notifications
                 </h3>
 
@@ -8570,25 +8644,6 @@ function getActiveScheduleBlocksForWeekday(
 
 function renderPlanning() {
 
-    const domains =
-        Database.getDomains();
-
-
-    const totalActiveBlocks =
-        Database
-            .getScheduleBlocks()
-            .filter(
-                block =>
-                    block.active !== false
-            ).length;
-
-
-    const totalPunctualEvents =
-        Database
-            .getPunctualEvents()
-            .length;
-
-
     const date =
         AppState.selectedDate;
 
@@ -8694,21 +8749,7 @@ function renderPlanning() {
             </div>
 
 
-            ${
-                domains.length === 0 &&
-                totalActiveBlocks === 0 &&
-                totalPunctualEvents === 0
-                    ? renderEmptyState(
-                        "🗓️",
-                        "Rien de programmé pour l'instant",
-                        "Va dans l'onglet « Semaine type », ajoute " +
-                        "des créneaux et coche « Reporté sur " +
-                        "l'emploi du temps » pour qu'ils apparaissent " +
-                        "ici, ou ajoute directement un évènement " +
-                        "ponctuel ci-dessous."
-                    )
-                    : renderPlanningCalendar(date)
-            }
+            ${renderPlanningCalendar(date)}
 
 
             <section class="agenda-day">
