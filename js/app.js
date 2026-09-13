@@ -42,6 +42,21 @@ const APP = {
    ÉTAT DE L'APPLICATION
    ====================================================== */
 
+/*
+ * Les 4 onglets considérés comme "Principal" dans la
+ * navigation (les autres sont regroupés dans "Plus").
+ */
+
+const MAIN_NAV_VIEWS = [
+
+    "accueil",
+    "matieres",
+    "chapitres",
+    "agenda"
+
+];
+
+
 const AppState = {
 
     currentView: "accueil",
@@ -63,6 +78,15 @@ const AppState = {
 
     editingPunctualEventId:
         null,
+
+    /*
+     * État d'affichage (déplié/replié) de la section
+     * "Plus" dans la navigation. Initialisé selon le
+     * réglage "keepPlusMenuExpanded" au chargement.
+     */
+
+    plusMenuExpanded:
+        false,
 
     /*
      * Filtre actif dans l'agenda.
@@ -155,6 +179,11 @@ function initApp() {
 
     AppState.initialized = true;
 
+    AppState.plusMenuExpanded =
+        Database.getSettings()
+            .keepPlusMenuExpanded ||
+        false;
+
 
     setupNavigation();
 
@@ -238,6 +267,37 @@ function navigateTo(view) {
 
     AppState.currentView =
         view;
+
+
+    /*
+     * Les 4 onglets "Principal" replient automatiquement
+     * la section "Plus" quand on y retourne — sauf si
+     * l'utilisateur a choisi (dans Paramètres) de la
+     * garder toujours déroulée.
+     */
+
+    const isMainTab =
+        MAIN_NAV_VIEWS.includes(
+            view
+        );
+
+
+    if (
+        isMainTab &&
+        !Database.getSettings().keepPlusMenuExpanded
+    ) {
+
+        AppState.plusMenuExpanded =
+            false;
+
+    } else if (
+        !isMainTab
+    ) {
+
+        AppState.plusMenuExpanded =
+            true;
+
+    }
 
 
     renderApp();
@@ -404,6 +464,16 @@ function handleClick(event) {
             completeReviewFromUI(
                 target.dataset.id
             );
+
+            break;
+
+
+        case "toggle-plus-menu":
+
+            AppState.plusMenuExpanded =
+                !AppState.plusMenuExpanded;
+
+            renderApp();
 
             break;
 
@@ -985,6 +1055,18 @@ function handleChange(event) {
 
         }
 
+
+        if (
+            setting === "keepPlusMenuExpanded"
+        ) {
+
+            AppState.plusMenuExpanded =
+                value;
+
+            renderApp();
+
+        }
+
     }
 
 
@@ -1169,9 +1251,19 @@ function renderHeader() {
 
 function renderNavigation() {
 
+    const plusExpanded =
+        AppState.plusMenuExpanded ||
+        Database.getSettings()
+            .keepPlusMenuExpanded;
+
+
     return `
 
         <nav class="app-navigation">
+
+            <span class="nav-section-label">
+                Principal
+            </span>
 
             <button
                 type="button"
@@ -1203,45 +1295,64 @@ function renderNavigation() {
 
             <button
                 type="button"
-                data-view="planning"
+                class="nav-section-toggle"
+                data-action="toggle-plus-menu"
+                aria-expanded="${plusExpanded}"
             >
-                🗓️ Emploi du temps
+                <span>
+                    ➕ Plus
+                </span>
+
+                <span class="nav-section-toggle-arrow">
+                    ${plusExpanded ? "▲" : "▼"}
+                </span>
             </button>
 
-            <button
-                type="button"
-                data-view="semaine-type"
-            >
-                📆 Semaine type
-            </button>
+            <div class="nav-secondary-group${plusExpanded ? "" : " collapsed"}">
 
-            <button
-                type="button"
-                data-view="pomodoro"
-            >
-                🍅 Pomodoro
-            </button>
+                <button
+                    type="button"
+                    data-view="planning"
+                >
+                    🗓️ Emploi du temps
+                </button>
 
-            <button
-                type="button"
-                data-view="statistiques"
-            >
-                📊 Statistiques
-            </button>
+                <button
+                    type="button"
+                    data-view="semaine-type"
+                >
+                    📆 Semaine type
+                </button>
 
-            <button
-                type="button"
-                data-view="parametres"
-            >
-                ⚙️ Paramètres
-            </button>
+                <button
+                    type="button"
+                    data-view="pomodoro"
+                >
+                    🍅 Pomodoro
+                </button>
 
-            <button
-                type="button"
-                data-view="decouverte"
-            >
-                🧭 Découverte
-            </button>
+                <button
+                    type="button"
+                    data-view="statistiques"
+                >
+                    📊 Statistiques
+                </button>
+
+                <button
+                    type="button"
+                    data-view="parametres"
+                >
+                    ⚙️ Paramètres
+                </button>
+
+                <button
+                    type="button"
+                    data-view="decouverte"
+                >
+                    🧭 Découverte
+                </button>
+
+            </div>
 
         </nav>
 
@@ -7600,6 +7711,41 @@ function renderSettings() {
                     </select>
 
                 </label>
+
+            </section>
+
+
+            <section class="settings-section">
+
+                <h3>
+                    Navigation
+                </h3>
+
+                <label class="setting-row">
+
+                    <span>
+                        Garder la section "Plus" toujours dépliée
+                    </span>
+
+                    <input
+                        type="checkbox"
+                        data-setting="keepPlusMenuExpanded"
+                        ${
+                            settings.keepPlusMenuExpanded
+                                ? "checked"
+                                : ""
+                        }
+                    >
+
+                </label>
+
+                <p class="settings-hint">
+                    Pratique si tu utilises souvent l'Emploi du
+                    temps, le Pomodoro ou les Statistiques : la
+                    section "Plus" reste ouverte au lieu de se
+                    replier à chaque fois que tu reviens sur un
+                    onglet principal.
+                </p>
 
             </section>
 

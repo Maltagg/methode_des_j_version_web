@@ -459,6 +459,64 @@ font-weight: 600;
 
 }
 
+.nav-section-label {
+
+    padding: 10px 14px 4px;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.05em;
+
+    color:
+        var(--color-text-secondary);
+
+}
+
+.nav-section-label:first-child {
+
+    padding-top: 0;
+
+}
+
+.nav-section-toggle {
+
+    display: flex !important;
+
+    justify-content: space-between;
+
+    margin-top: 4px;
+
+}
+
+.nav-section-toggle-arrow {
+
+    font-size: 10px;
+
+    color:
+        var(--color-text-secondary);
+
+}
+
+.nav-secondary-group {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 5px;
+
+}
+
+.nav-secondary-group.collapsed {
+
+    display: none;
+
+}
+
 /* ======================================================
 CONTENU PRINCIPAL
 ====================================================== */
@@ -2786,6 +2844,76 @@ RESPONSIVE — MOBILE
         9px 12px;
 
     font-size: 13px;
+}
+
+.nav-section-label {
+
+    /*
+     * Sur mobile (barre horizontale), le texte du
+     * label prendrait trop de place : on le masque
+     * et on garde juste un séparateur discret.
+     */
+
+    font-size: 0;
+
+    padding: 0 4px;
+
+    align-self: stretch;
+
+    display: flex;
+    align-items: center;
+
+}
+
+.nav-section-label::before {
+
+    content: "";
+
+    width: 1px;
+
+    height: 60%;
+
+    background:
+        var(--color-border);
+
+}
+
+.nav-section-toggle {
+
+    flex-direction: column;
+
+    gap: 0;
+
+    font-size: 10px;
+
+    padding: 6px 8px;
+
+}
+
+.nav-section-toggle span:first-child {
+
+    font-size: 11px;
+
+}
+
+.nav-secondary-group {
+
+    flex-direction: row;
+
+    gap: 5px;
+
+}
+
+.nav-secondary-group.collapsed {
+
+    display: none;
+
+}
+
+.nav-section-label:first-child {
+
+    display: none;
+
 }
 
 

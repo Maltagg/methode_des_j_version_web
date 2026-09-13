@@ -896,6 +896,98 @@ if ("serviceWorker" in navigator) {
         }
     );
 
+
+    /*
+     * Mise à jour automatique "safe" : dès qu'une nouvelle
+     * version prend le contrôle de la page (nouveau
+     * déploiement détecté), on recharge automatiquement —
+     * mais jamais pendant qu'un formulaire est ouvert ou
+     * qu'un Pomodoro est en cours, pour ne rien couper.
+     * Si ce n'est pas le bon moment, on réessaie un peu
+     * plus tard, sans jamais forcer.
+     */
+
+    let autoReloadPending =
+        false;
+
+
+    function isSafeToAutoReload() {
+
+        const modalOpen =
+            !!document.getElementById(
+                "modal-overlay"
+            );
+
+        const pomodoroRunning =
+            typeof AppState !== "undefined" &&
+            AppState.pomodoro &&
+            AppState.pomodoro.phase !== "idle";
+
+        return (
+            !modalOpen &&
+            !pomodoroRunning
+        );
+
+    }
+
+
+    function scheduleAutoReload() {
+
+        if (autoReloadPending) {
+
+            return;
+
+        }
+
+
+        autoReloadPending = true;
+
+
+        const tryReload = () => {
+
+            if (!isSafeToAutoReload()) {
+
+                setTimeout(
+                    tryReload,
+                    8000
+                );
+
+                return;
+
+            }
+
+
+            if (typeof showToast === "function") {
+
+                showToast(
+                    "🔄 Mise à jour de l'appli..."
+                );
+
+            }
+
+
+            setTimeout(
+                () => {
+
+                    window.location.reload();
+
+                },
+                600
+            );
+
+        };
+
+
+        tryReload();
+
+    }
+
+
+    navigator.serviceWorker.addEventListener(
+        "controllerchange",
+        scheduleAutoReload
+    );
+
 }
 
 </script>

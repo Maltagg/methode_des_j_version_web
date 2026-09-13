@@ -105,7 +105,16 @@ const DEFAULT_DATABASE = {
          * l'arrête manuellement).
          */
 
-        pomodoroLoopCount: 0
+        pomodoroLoopCount: 0,
+
+        /*
+         * Si true, la section "Plus" de la navigation
+         * reste toujours dépliée (ne se replie jamais
+         * automatiquement en revenant sur un onglet
+         * principal).
+         */
+
+        keepPlusMenuExpanded: false
 
     }
 
