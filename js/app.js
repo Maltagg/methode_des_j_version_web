@@ -1191,6 +1191,9 @@ function renderApp() {
 
     renderCurrentView();
 
+
+    ensureSyncCooldownCountdown();
+
 }
 
 
@@ -7374,13 +7377,43 @@ function renderSyncSection() {
 
                         <div class="settings-actions">
 
-                            <button
-                                type="button"
-                                class="primary-button"
-                                data-action="generate-sync-code"
-                            >
-                                ✨ Générer un nouveau code
-                            </button>
+                            ${
+                                (() => {
+
+                                    const remainingMs =
+                                        getSyncCodeCooldownRemainingMs();
+
+
+                                    if (remainingMs > 0) {
+
+                                        return `
+                                            <button
+                                                type="button"
+                                                class="primary-button"
+                                                disabled
+                                            >
+                                                ⏳ Nouveau code dans
+                                                <span id="sync-cooldown-display">
+                                                    ${formatCooldownClock(remainingMs)}
+                                                </span>
+                                            </button>
+                                        `;
+
+                                    }
+
+
+                                    return `
+                                        <button
+                                            type="button"
+                                            class="primary-button"
+                                            data-action="generate-sync-code"
+                                        >
+                                            ✨ Générer un nouveau code
+                                        </button>
+                                    `;
+
+                                })()
+                            }
 
                         </div>
 
@@ -7463,7 +7496,225 @@ function formatSyncStatusText(
 }
 
 
+/*
+ * Cooldown anti-spam : 5 minutes entre deux créations
+ * de code de synchro sur le même appareil.
+ *
+ * IMPORTANT : cet horodatage est stocké directement en
+ * localStorage, EN DEHORS de la base de données
+ * synchronisée (Database.settings). Si on le mettait
+ * dans les settings synchronisés, se connecter à un
+ * autre code (qui importe les données de ce code, y
+ * compris ses "settings") écraserait cet horodatage et
+ * permettrait de recréer un code immédiatement après
+ * une connexion/déconnexion — c'est exactement la faille
+ * qui a été trouvée et corrigée ici.
+ */
+
+const SYNC_CODE_COOLDOWN_KEY =
+    "methode_des_j_sync_cooldown";
+
+
+const SYNC_CODE_COOLDOWN_MS =
+    5 * 60 * 1000;
+
+
+function getLastSyncCodeCreatedAt() {
+
+    const raw =
+        localStorage.getItem(
+            SYNC_CODE_COOLDOWN_KEY
+        );
+
+
+    const parsed =
+        raw
+            ? Number(raw)
+            : null;
+
+
+    return (
+        parsed &&
+        !Number.isNaN(parsed)
+    )
+        ? parsed
+        : null;
+
+}
+
+
+function setLastSyncCodeCreatedAt(
+    timestamp
+) {
+
+    localStorage.setItem(
+        SYNC_CODE_COOLDOWN_KEY,
+        String(timestamp)
+    );
+
+}
+
+
+function getSyncCodeCooldownRemainingMs() {
+
+    const lastCreatedAt =
+        getLastSyncCodeCreatedAt();
+
+
+    if (!lastCreatedAt) {
+
+        return 0;
+
+    }
+
+
+    const elapsed =
+        Date.now() - lastCreatedAt;
+
+
+    return Math.max(
+        0,
+        SYNC_CODE_COOLDOWN_MS - elapsed
+    );
+
+}
+
+
+function formatCooldownClock(
+    ms
+) {
+
+    const totalSeconds =
+        Math.ceil(
+            ms / 1000
+        );
+
+    const minutes =
+        Math.floor(
+            totalSeconds / 60
+        );
+
+    const seconds =
+        totalSeconds % 60;
+
+
+    return (
+        String(minutes).padStart(2, "0") +
+        ":" +
+        String(seconds).padStart(2, "0")
+    );
+
+}
+
+
+let syncCooldownIntervalId =
+    null;
+
+
+/**
+ * S'assure qu'un chrono visible tourne tant que le
+ * cooldown de création de code de synchro est actif.
+ * Se relance à chaque renderApp() ; s'arrête tout seul
+ * si l'élément disparaît (changement de page) ou si
+ * le cooldown est terminé.
+ */
+
+function ensureSyncCooldownCountdown() {
+
+    if (syncCooldownIntervalId) {
+
+        clearInterval(
+            syncCooldownIntervalId
+        );
+
+        syncCooldownIntervalId =
+            null;
+
+    }
+
+
+    const display =
+        document.getElementById(
+            "sync-cooldown-display"
+        );
+
+
+    if (!display) {
+
+        return;
+
+    }
+
+
+    syncCooldownIntervalId =
+        setInterval(
+            () => {
+
+                const remainingMs =
+                    getSyncCodeCooldownRemainingMs();
+
+
+                const el =
+                    document.getElementById(
+                        "sync-cooldown-display"
+                    );
+
+
+                if (
+                    !el ||
+                    remainingMs <= 0
+                ) {
+
+                    clearInterval(
+                        syncCooldownIntervalId
+                    );
+
+                    syncCooldownIntervalId =
+                        null;
+
+
+                    if (remainingMs <= 0) {
+
+                        renderApp();
+
+                    }
+
+
+                    return;
+
+                }
+
+
+                el.textContent =
+                    formatCooldownClock(
+                        remainingMs
+                    );
+
+            },
+            1000
+        );
+
+}
+
+
 async function handleGenerateSyncCode() {
+
+    const remainingMs =
+        getSyncCodeCooldownRemainingMs();
+
+
+    if (remainingMs > 0) {
+
+        showToast(
+            "⏳ Attends encore " +
+            formatCooldownClock(remainingMs) +
+            " avant de créer un nouveau code."
+        );
+
+        return;
+
+    }
+
 
     const code =
         Sync.generateSyncCodeValue();
@@ -7471,6 +7722,11 @@ async function handleGenerateSyncCode() {
 
     Sync.setSyncCode(
         code
+    );
+
+
+    setLastSyncCodeCreatedAt(
+        Date.now()
     );
 
 

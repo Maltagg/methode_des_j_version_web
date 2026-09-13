@@ -898,37 +898,13 @@ if ("serviceWorker" in navigator) {
 
 
     /*
-     * Mise à jour automatique "safe" : dès qu'une nouvelle
-     * version prend le contrôle de la page (nouveau
-     * déploiement détecté), on recharge automatiquement —
-     * mais jamais pendant qu'un formulaire est ouvert ou
-     * qu'un Pomodoro est en cours, pour ne rien couper.
-     * Si ce n'est pas le bon moment, on réessaie un peu
-     * plus tard, sans jamais forcer.
+     * Mise à jour automatique : dès qu'une nouvelle version
+     * prend le contrôle de la page (nouveau déploiement
+     * détecté), on recharge automatiquement, sans condition.
      */
 
     let autoReloadPending =
         false;
-
-
-    function isSafeToAutoReload() {
-
-        const modalOpen =
-            !!document.getElementById(
-                "modal-overlay"
-            );
-
-        const pomodoroRunning =
-            typeof AppState !== "undefined" &&
-            AppState.pomodoro &&
-            AppState.pomodoro.phase !== "idle";
-
-        return (
-            !modalOpen &&
-            !pomodoroRunning
-        );
-
-    }
 
 
     function scheduleAutoReload() {
@@ -943,42 +919,23 @@ if ("serviceWorker" in navigator) {
         autoReloadPending = true;
 
 
-        const tryReload = () => {
+        if (typeof showToast === "function") {
 
-            if (!isSafeToAutoReload()) {
-
-                setTimeout(
-                    tryReload,
-                    8000
-                );
-
-                return;
-
-            }
-
-
-            if (typeof showToast === "function") {
-
-                showToast(
-                    "🔄 Mise à jour de l'appli..."
-                );
-
-            }
-
-
-            setTimeout(
-                () => {
-
-                    window.location.reload();
-
-                },
-                600
+            showToast(
+                "🔄 Mise à jour de l'appli..."
             );
 
-        };
+        }
 
 
-        tryReload();
+        setTimeout(
+            () => {
+
+                window.location.reload();
+
+            },
+            600
+        );
 
     }
 
